@@ -51,14 +51,19 @@ more than $100? Return the name and monthly maintenance of the facilities
 in question. */
 
 SELECT  name,  monthlymaintenance,
-CASE WHEN monthlymaintenance > 100 THEN EXPENSIVE
-     ELSE CHEAP END AS facilitytype
+CASE WHEN monthlymaintenance > 100 THEN "EXPENSIVE"
+     ELSE "CHEAP" END AS facilitytype
 FROM Facilities 
 
 /* Q6: You'd like to get the first and last name of the last member(s)
 who signed up. Do not use the LIMIT clause for your solution. */
 
-SELECT * FROM Members WHERE joindate is not NULL
+SELECT DISTINCT (
+CONCAT( firstname, ' ', surname )
+) AS fullname, joindate
+FROM Members
+WHERE joindate IS NOT NULL
+ORDER BY joindate DESC
 
 /* Q7: How can you produce a list of all members who have used a tennis court?
 Include in your output the name of the court, and the name of the member
