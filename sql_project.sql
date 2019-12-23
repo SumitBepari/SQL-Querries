@@ -102,22 +102,20 @@ AND F.membercost * B.slots >30
 ORDER BY cost DESC
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
-SELECT B.facid, F.name, CONCAT( M.firstname, ' ', M.surname ) AS name, F.guestcost * B.slots AS cost
+SELECT *
+FROM (
+
+SELECT F.name AS facility, CONCAT( M.firstname, ' ', M.surname ) AS name,
+CASE WHEN B.memid =0
+THEN F.guestcost * B.slots
+ELSE F.membercost * B.slots
+END AS cost
 FROM Bookings B
-INNER JOIN Members M ON M.memid = B.memid
+INNER JOIN Facilities F ON B.facid = F.facid
 AND B.starttime LIKE '2012-09-14%'
-INNER JOIN Facilities F ON F.facid = B.facid
-WHERE B.memid =0
-AND F.guestcost * B.slots >30
-UNION
-SELECT B.facid, F.name, CONCAT( M.firstname, ' ', M.surname ) AS name, F.membercost * B.slots AS cost
-FROM Bookings B
-INNER JOIN Members M ON M.memid = B.memid
-AND B.starttime LIKE '2012-09-14%'
-INNER JOIN Facilities F ON F.facid = B.facid
-WHERE B.memid >0
-AND F.membercost * B.slots >30
-ORDER BY cost DESC
+INNER JOIN Members M ON B.memid = M.memid
+)sub
+WHERE sub.cost >30
 
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
